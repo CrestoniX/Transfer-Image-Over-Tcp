@@ -1,0 +1,79 @@
+# Copyright (c) 2015 Ruslan Baratov
+# All rights reserved.
+
+cmake_minimum_required(VERSION 3.0)
+project(Hunter)
+
+include(ExternalProject) # ExternalProject_Add
+
+# Just download archive (do not install to CMAKE_INSTALL_PREFIX)
+
+# Note that archive will be copied to a special internal location and can
+# be found by <package-name>_ROOT variable. I.e. there are no files installed
+# into CMAKE_INSTALL_PREFIX. For instance this scheme doesn't fit for
+# header-only library. Even if header-only library has no build
+# instructions it still can be installed. Actually using CMake CONFIG-mode
+# (see 'find_package' manuals) is the best way to install such package.
+
+list(APPEND CMAKE_MODULE_PATH "@HUNTER_SELF@/cmake/modules")
+
+include(hunter_status_debug)
+include(hunter_assert_not_empty_string)
+
+hunter_status_debug("Scheme: url_sha1_download")
+
+# Check preconditions
+hunter_assert_not_empty_string("@HUNTER_EP_NAME@")
+hunter_assert_not_empty_string("@HUNTER_PACKAGE_DOWNLOAD_DIR@")
+hunter_assert_not_empty_string("@HUNTER_PACKAGE_SOURCE_DIR@")
+hunter_assert_not_empty_string("@HUNTER_PACKAGE_SHA1@")
+hunter_assert_not_empty_string("@HUNTER_PACKAGE_URL@")
+hunter_assert_not_empty_string("@HUNTER_SELF@")
+hunter_assert_not_empty_string("@HUNTER_TLS_VERIFY@")
+
+get_filename_component(filename "@HUNTER_PACKAGE_URL@" NAME)
+set(dest "@HUNTER_PACKAGE_DOWNLOAD_DIR@/${filename}")
+set(dest_home "@HUNTER_PACKAGE_SOURCE_DIR@/${filename}")
+
+hunter_status_debug("Project `@HUNTER_EP_NAME@`. Downloading:")
+hunter_status_debug("  @HUNTER_PACKAGE_URL@")
+hunter_status_debug("  -> ${dest}")
+hunter_status_debug("  -> ${dest_home}")
+
+string(COMPARE EQUAL "@HUNTER_PACKAGE_PROTECTED_SOURCES@" "" is_empty)
+if(is_empty)
+  set(http_credentials "")
+else()
+  set(
+      http_credentials
+      HTTP_USERNAME "@HUNTER_PACKAGE_HTTP_USERNAME@"
+      HTTP_PASSWORD "@HUNTER_PACKAGE_HTTP_PASSWORD@"
+  )
+endif()
+
+ExternalProject_Add(
+    "@HUNTER_EP_NAME@"
+    URL
+    @HUNTER_PACKAGE_URL@
+    URL_HASH
+    SHA1=@HUNTER_PACKAGE_SHA1@
+    ${http_credentials}
+    DOWNLOAD_DIR
+    "@HUNTER_PACKAGE_DOWNLOAD_DIR@"
+    DOWNLOAD_NO_EXTRACT YES
+    TLS_VERIFY
+    "@HUNTER_TLS_VERIFY@"
+    SOURCE_DIR
+    "@HUNTER_PACKAGE_SOURCE_DIR@"
+    CONFIGURE_COMMAND
+    ""
+    BUILD_COMMAND
+        # copy file from download dir to source dir
+        "@CMAKE_COMMAND@"
+        -E copy
+        "${dest}"
+        "@HUNTER_PACKAGE_SOURCE_DIR@"
+    INSTALL_COMMAND
+    ""
+)
+

@@ -1,0 +1,7 @@
+hunter_config(
+    OpenCV
+    VERSION ${HUNTER_OpenCV_VERSION}
+    CMAKE_ARGS
+    WITH_GTK+=ON
+    OPENCV_GTK+_USE_FIND_PACKEGE=YES
+)

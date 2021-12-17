@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/crestonix/CLionProjects/MirroringClient/main.cpp
+iostream
+-
+boost/asio.hpp
+-
+functional
+-
+optional
+-
+unordered_set
+-
+fstream
+-
+string
+-
+

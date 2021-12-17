@@ -1,0 +1,22 @@
+/snap/clion/164/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/bin/make -DCMAKE_C_COMPILER=/bin/gcc -DCMAKE_CXX_COMPILER=/bin/g++ -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /home/crestonix/CLionProjects/MirroringClient
+-- [hunter] Calculating Toolchain-SHA1
+-- [hunter] Calculating Config-SHA1
+-- [hunter] HUNTER_ROOT: /home/crestonix/.hunter
+-- [hunter] [ Hunter-ID: 95c47c9 | Toolchain-ID: 4162dcb | Config-ID: c8a7791 ]
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] BOOST_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 1.76.0)
+-- [hunter] OPENCV_ROOT: /home/crestonix/.hunter/_Base/95c47c9/4162dcb/c8a7791/Install (ver.: 4.5.3-p0)
+-- Boost version: 1.76.0
+-- Found the following Boost libraries:
+--   date_time
+--   system
+--   thread
+--   filesystem
+--   regex
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/crestonix/CLionProjects/MirroringClient/cmake-build-debug
