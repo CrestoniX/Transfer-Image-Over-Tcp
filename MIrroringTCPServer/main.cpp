@@ -5,17 +5,14 @@
 #include <unordered_set>
 #include <fstream>
 #include <string>
-#include <opencv2/highgui.hpp>
-#include <opencv2/cvconfig.h>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/opencv.hpp>
-#include <opencv2/opencv_modules.hpp>
-#include <opencv2/ml.hpp>
-#include <opencv2/photo.hpp>
-#include <opencv2/core/types_c.h>
 #include <vector>
+#include <thread>
+
+#include "session_logger.h"
 
 class Session : public std::enable_shared_from_this<Session> {
 public:
@@ -44,20 +41,24 @@ private:
                 std::cout << "Bytes received: " << bytes_transfered << std::endl;
                 self->mat_for_read = cv::imdecode(self->ImgBuf, 1);
                 if(!self->ImgBuf.empty())
-                cv::imwrite("/home/crestonix/CLionProjects/Gray_Image.jpg", self->mat_for_read);
-                cv::flip(self->mat_for_read, self->mat_for_write, 1);
-                cv::imwrite("/home/crestonix/CLionProjects/Flipped.jpg", self->mat_for_write);
-                self->ImgBuf_for_response.resize(100000);
-                cv::imencode(".jpg", self->mat_for_write, self->ImgBuf_for_response);
-                self->ImgBuf_for_response.push_back('.');
-                self->ImgBuf_for_response.push_back('E');
-                self->ImgBuf_for_response.push_back('O');
-                self->ImgBuf_for_response.push_back('I');
-                self->ImgBuf_for_response.push_back('.');
-                auto view = self->streambuf_for_response.prepare(self->ImgBuf_for_response.size());
-                std::memcpy(view.data(), self->ImgBuf_for_response.data(), self->ImgBuf_for_response.size());
-                self->streambuf_for_response.commit(self->ImgBuf_for_response.size());
-                self->async_write();
+                {
+                    auto queue = logging_queue::GetInstance();
+                    queue->push_info({});
+                    cv::imwrite("Gray_Image.jpg", self->mat_for_read);
+                    cv::flip(self->mat_for_read, self->mat_for_write, 1);
+                    cv::imwrite("Flipped.jpg", self->mat_for_write);
+                    self->ImgBuf_for_response.resize(100000);
+                    cv::imencode(".jpg", self->mat_for_write, self->ImgBuf_for_response);
+                    self->ImgBuf_for_response.push_back('.');
+                    self->ImgBuf_for_response.push_back('E');
+                    self->ImgBuf_for_response.push_back('O');
+                    self->ImgBuf_for_response.push_back('I');
+                    self->ImgBuf_for_response.push_back('.');
+                    auto view = self->streambuf_for_response.prepare(self->ImgBuf_for_response.size());
+                    std::memcpy(view.data(), self->ImgBuf_for_response.data(), self->ImgBuf_for_response.size());
+                    self->streambuf_for_response.commit(self->ImgBuf_for_response.size());
+                    self->async_write();
+                }
            }
         });
     }
@@ -99,6 +100,8 @@ private:
 int main() {
     boost::asio::io_context io_context;
     Server server(io_context, 15001);
+    std::thread logger_thread(&session_logger::start_logger, session_logger());
+    logger_thread.detach();
     server.async_accept();
     io_context.run();
     return 0;
